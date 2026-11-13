@@ -109,7 +109,7 @@ window.saveCloud=payload=>{
  // No se ocultan fallos anteriores ni se muestra «Sincronizado» por un guardado viejo.
  const operation=saveQueue.catch(()=>{}).then(()=>{
   if(auth.currentUser?.uid!==uid)throw new Error('La sesión cambió antes de guardar');
-  return setDoc(doc(db,'usuarios',uid,'datos','finanzas'),payload);
+  return setDoc(doc(db,'usuarios',uid,'datos','finanzas_pruebas_51'),payload);
  });
  saveQueue=operation;
  operation.then(()=>{
@@ -123,7 +123,7 @@ window.saveCloud=payload=>{
 onAuthStateChanged(auth,async user=>{
  if(!user){window.activeUser=null;el('auth-overlay').hidden=false;el('account-bar').hidden=true;return}
  window.activeUser=user;el('account-email').textContent=user.email;el('sync-state').textContent='Cargando datos...';showVerification(user);
- try{const snap=await getDoc(doc(db,'usuarios',user.uid,'datos','finanzas'));
+ try{const snap=await getDoc(doc(db,'usuarios',user.uid,'datos','finanzas_pruebas_51'));
  window.cloudData=snap.exists()?snap.data():null;
  // A cloud document that doesn't exist must not be replaced with old data automatically.
  el('auth-overlay').hidden=true;el('account-bar').hidden=false;
