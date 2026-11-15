@@ -133,7 +133,20 @@ el('premium-btn').onclick = async () => {
 };
 
 
-let saveQueue=Promise.resolve();
+
+async function consultarPremium(user) {
+  if (!user) return false;
+  try {
+    const snap = await getDoc(doc(db, 'suscripciones', user.uid));
+    return snap.exists() && snap.data().estado === 'activo';
+  } catch (error) {
+    console.error('Error al consultar Premium:', error);
+    return false;
+  }
+}
+
+  
+  let saveQueue=Promise.resolve();
 let syncRevision=0;
 window.saveCloud=payload=>{
  const uid=window.activeUser?.uid;
