@@ -100,9 +100,38 @@ el('reset-password-btn').onclick=async()=>{
 };
 el('logout-btn').onclick=()=>signOut(auth).then(()=>location.reload());
 
-el('premium-btn').onclick = () => {
-  alert('Mi Bolsillo Premium\n\nPlan mensual: 15 Bs\nPlan anual: 150 Bs\n\nPróximamente podrás solicitar tu suscripción. Premium se activará únicamente después de confirmar el pago.');
+
+el('premium-btn').onclick = async () => {
+  const user = auth.currentUser;
+  if (!user) {
+    alert('Primero debes iniciar sesión.');
+    return;
+  }
+
+  const opcion = prompt(
+    'MI BOLSILLO PREMIUM\n\n1 = Mensual (15 Bs)\n2 = Anual (150 Bs)\n\nEscribe 1 o 2:'
+  );
+
+  if (opcion === null) return;
+
+  if (opcion !== '1' && opcion !== '2') {
+    alert('Selecciona 1 o 2.');
+    return;
+  }
+
+  const plan = opcion === '1' ? 'mensual' : 'anual';
+
+  try {
+    await setDoc(
+      doc(db, 'solicitudes_premium', user.uid),
+      { uid: user.uid, plan, estado: 'pendiente' }
+    );
+    alert('Solicitud enviada. Premium se activará después de confirmar el pago.');
+  } catch (error) {
+    alert('No se pudo enviar la solicitud: ' + error.message);
+  }
 };
+
 
 let saveQueue=Promise.resolve();
 let syncRevision=0;
