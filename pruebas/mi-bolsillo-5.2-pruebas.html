@@ -99,6 +99,11 @@ el('reset-password-btn').onclick=async()=>{
  }finally{btn.disabled=false}
 };
 el('logout-btn').onclick=()=>signOut(auth).then(()=>location.reload());
+
+el('premium-btn').onclick = () => {
+  alert('Mi Bolsillo Premium\n\nPlan mensual: 15 Bs\nPlan anual: 150 Bs\n\nPróximamente podrás solicitar tu suscripción. Premium se activará únicamente después de confirmar el pago.');
+};
+
 let saveQueue=Promise.resolve();
 let syncRevision=0;
 window.saveCloud=payload=>{
