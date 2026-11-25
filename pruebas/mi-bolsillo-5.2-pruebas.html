@@ -138,7 +138,7 @@ async function consultarPremium(user) {
   if (!user) return false;
   try {
     const snap = await getDoc(doc(db, 'suscripciones', user.uid));
-    return snap.exists() && snap.data().estado === 'activo';
+    return snap.exists() && snap.data().estado === 'activo' && typeof snap.data().vencimiento?.toMillis === 'function' && snap.data().vencimiento.toMillis() > Date.now();
   } catch (error) {
     console.error('Error al consultar Premium:', error);
     return false;
