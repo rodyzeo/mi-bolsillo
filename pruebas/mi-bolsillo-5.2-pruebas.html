@@ -170,6 +170,11 @@ window.saveCloud=payload=>{
 onAuthStateChanged(auth,async user=>{
  if(!user){window.activeUser=null;el('auth-overlay').hidden=false;el('account-bar').hidden=true;return}
  window.activeUser=user;el('account-email').textContent=user.email;el('sync-state').textContent='Cargando datos...';showVerification(user);
+  window.isPremium = await consultarPremium(user);
+el('premium-btn').textContent = window.isPremium
+  ? '⭐ Premium activo'
+  : '⭐ Solicitar Premium';
+el('premium-btn').disabled = window.isPremium;
  try{const snap=await getDoc(doc(db,'usuarios',user.uid,'datos','finanzas_pruebas_51'));
  window.cloudData=snap.exists()?snap.data():null;
  // A cloud document that doesn't exist must not be replaced with old data automatically.
