@@ -103,32 +103,49 @@ el('logout-btn').onclick=()=>signOut(auth).then(()=>location.reload());
 
 el('premium-btn').onclick = async () => {
   const user = auth.currentUser;
+
   if (!user) {
     alert('Primero debes iniciar sesión.');
     return;
   }
 
-  const opcion = prompt(
-    'MI BOLSILLO PREMIUM\n\n1 = Mensual (15 Bs)\n2 = Anual (150 Bs)\n\nEscribe 1 o 2:'
-  );
-
-  if (opcion === null) return;
-
-  if (opcion !== '1' && opcion !== '2') {
-    alert('Selecciona 1 o 2.');
-    return;
-  }
-
-  const plan = opcion === '1' ? 'mensual' : 'anual';
+  const boton = el('premium-btn');
+  boton.disabled = true;
 
   try {
-    await setDoc(
-      doc(db, 'solicitudes_premium', user.uid),
-      { uid: user.uid, plan, estado: 'pendiente' }
+    const referencia = doc(db, 'solicitudes_premium', user.uid);
+    const solicitud = await getDoc(referencia);
+
+    if (solicitud.exists()) {
+      alert('Ya tienes una solicitud Premium registrada. Contacta con administración para consultar su estado.');
+      return;
+    }
+
+    const opcion = prompt(
+      'MI BOLSILLO PREMIUM\n\n1 = Mensual (15 Bs)\n2 = Anual (150 Bs)\n\nEscribe 1 o 2:'
     );
+
+    if (opcion === null) return;
+
+    if (opcion !== '1' && opcion !== '2') {
+      alert('Selecciona 1 o 2.');
+      return;
+    }
+
+    const plan = opcion === '1' ? 'mensual' : 'anual';
+
+    await setDoc(referencia, {
+      uid: user.uid,
+      plan,
+      estado: 'pendiente'
+    });
+
     alert('Solicitud enviada. Premium se activará después de confirmar el pago.');
+
   } catch (error) {
-    alert('No se pudo enviar la solicitud: ' + error.message);
+    alert('No se pudo procesar la solicitud: ' + error.message);
+  } finally {
+    boton.disabled = false;
   }
 };
 
